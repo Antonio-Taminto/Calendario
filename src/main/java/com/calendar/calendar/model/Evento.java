@@ -3,6 +3,7 @@ package com.calendar.calendar.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,10 +20,10 @@ public class Evento {
     private String descrizione;
 
     @Column(nullable = false)
-    private Date dataInizio;
+    private LocalDateTime dataInizio;
 
     @Column(nullable = false)
-    private Date dataFine;
+    private LocalDateTime dataFine;
 
     @ManyToOne
     @JoinColumn(name = "calendario_id")
@@ -32,7 +33,7 @@ public class Evento {
     public Evento() {
     }
 
-    public Evento(Calendario calendario, Date dataFine, Date dataInizio, String descrizione, Long id, String nome) {
+    public Evento(Calendario calendario, LocalDateTime dataFine, LocalDateTime dataInizio, String descrizione, Long id, String nome) {
         this.calendario = calendario;
         this.dataFine = dataFine;
         this.dataInizio = dataInizio;
@@ -49,19 +50,19 @@ public class Evento {
         this.calendario = calendario;
     }
 
-    public Date getDataFine() {
+    public LocalDateTime getDataFine() {
         return dataFine;
     }
 
-    public void setDataFine(Date dataFine) {
+    public void setDataFine(LocalDateTime dataFine) {
         this.dataFine = dataFine;
     }
 
-    public Date getDataInizio() {
+    public LocalDateTime getDataInizio() {
         return dataInizio;
     }
 
-    public void setDataInizio(Date dataInizio) {
+    public void setDataInizio(LocalDateTime dataInizio) {
         this.dataInizio = dataInizio;
     }
 

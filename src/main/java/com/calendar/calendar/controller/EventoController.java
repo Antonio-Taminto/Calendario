@@ -3,9 +3,13 @@ package com.calendar.calendar.controller;
 import com.calendar.calendar.model.Evento;
 import com.calendar.calendar.service.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -33,5 +37,17 @@ public class EventoController {
     public ResponseEntity<Evento> deleteEventoById(@PathVariable(value = "id") Long id){
         eventoService.deleteEventoById(id);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/")
+    public ResponseEntity<List<Evento>> getEventoBetweenDates
+            (@RequestParam("from")@DateTimeFormat(pattern="yyyy-MM-dd") LocalDateTime dataInizio ,
+             @RequestParam("to")@DateTimeFormat(pattern="yyyy-MM-dd") LocalDateTime dataFine){
+        return ResponseEntity.ok(eventoService.getEventoBetweenDates(dataInizio,dataFine));
+    }
+    @PostMapping("/")
+    public ResponseEntity<?> createEventoRipetuto(
+            @RequestBody Evento evento,
+            @RequestParam("until") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime fineRipetizione){
+        return ResponseEntity.ok(eventoService.createEventoRipetuto(evento, fineRipetizione));
     }
 }

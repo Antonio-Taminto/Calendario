@@ -1,5 +1,6 @@
 package com.calendar.calendar.service.jpaimplementation;
 
+import com.calendar.calendar.exception.DateMismatchException;
 import com.calendar.calendar.exception.EntityNotFoundException;
 import com.calendar.calendar.model.Evento;
 import com.calendar.calendar.repository.EventoRepository;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,5 +56,32 @@ public class EventoServiceJpaImpl implements EventoService {
     public void deleteEventoById(Long id) {
         Evento evento = this.getEventoById(id);
         eventoRepository.delete(evento);
+    }
+
+
+    @Override
+    public List<Evento> getEventoBetweenDates(LocalDateTime inizio, LocalDateTime fine) {
+        if (inizio.isBefore(fine)){
+            throw new DateMismatchException(
+                    "la data di inizio è minore di quella finale, inizio :" + inizio + " fine: " + fine);
+        }
+        return eventoRepository.findByDataInizioBetween(inizio,fine);
+    }
+
+    @Override
+    public List<Evento> createEventoRipetuto(Evento evento, LocalDateTime fineRipetizione) {
+        if (evento.getDataInizio().isAfter(fineRipetizione)){
+            throw new DateMismatchException("la data di ripetizione non è corretta: " + fineRipetizione +
+                    "il primo evento inizia: " + evento.getDataInizio());
+        }
+        List<Evento> eventoList = new ArrayList<>();
+        while (evento.getDataInizio().isBefore(fineRipetizione)){
+            Evento newEvento  = new Evento();
+            BeanUtils.copyProperties(evento,newEvento);
+            eventoList.add(newEvento);
+            evento.setDataInizio(evento.getDataInizio().plusDays(1));
+            evento.setDataFine(evento.getDataFine().plusDays(1));
+        }
+        return eventoRepository.saveAll(eventoList);
     }
 }
