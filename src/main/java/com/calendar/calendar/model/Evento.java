@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-
 @Entity
 @Table(name = "eventi")
 public class Evento {
@@ -20,7 +18,7 @@ public class Evento {
     private String descrizione;
 
     @Column(nullable = false)
-    private LocalDateTime dataInizio;
+	private LocalDateTime dataInizio;
 
     @Column(nullable = false)
     private LocalDateTime dataFine;

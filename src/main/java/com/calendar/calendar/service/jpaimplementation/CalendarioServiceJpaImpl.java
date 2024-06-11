@@ -2,7 +2,7 @@ package com.calendar.calendar.service.jpaimplementation;
 
 import com.calendar.calendar.exception.EntityNotFoundException;
 import com.calendar.calendar.model.Calendario;
-import com.calendar.calendar.repository.CaledarioRepository;
+import com.calendar.calendar.repository.CalendarioRepository;
 import com.calendar.calendar.service.CalendarioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class CalendarioServiceJpaImpl implements CalendarioService {
     @Autowired
-    private CaledarioRepository caledarioRepository;
+    private CalendarioRepository caledarioRepository;
 
     @Override
     public Calendario createCalendario(Calendario calendario) {
