@@ -1,7 +1,7 @@
 package com.calendar.calendar.enums;
 
 public enum FilterEnum {
-	DAYLY,
+	DAILY,
 	WEEKLY,
 	MONTHLY;
 

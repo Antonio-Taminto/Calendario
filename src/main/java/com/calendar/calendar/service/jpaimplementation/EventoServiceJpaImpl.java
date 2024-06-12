@@ -96,22 +96,25 @@ public class EventoServiceJpaImpl implements EventoService {
 		LocalDateTime start;
 		LocalDateTime end;
 		switch (filterEnum) {
-		case DAYLY:
+		case DAILY:
 			start = data.atStartOfDay();
 			end = data.atTime(LocalTime.MAX);
 			eventoList = eventoRepository.findByDataInizioBetweenAndCalendario(start, end, calendario);
+			break;
 		case WEEKLY:
 			while (!data.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
-				data.minusDays(1);
+				data = data.minusDays(1);
 			}
 			start = data.atStartOfDay();
-			end = data.plusDays(7).atTime(LocalTime.MAX);
+			end = data.plusDays(6).atTime(LocalTime.MAX);
 			eventoList = eventoRepository.findByDataInizioBetweenAndCalendario(start, end, calendario);
+			break;
 		case MONTHLY:
-			LocalDateTime month = data.minusDays(data.getDayOfMonth()).atStartOfDay();
+			LocalDateTime month = data.minusDays(data.getDayOfMonth() - 1).atStartOfDay();
 			start = month;
-			end = month.plusMonths(1);
+			end = month.plusMonths(1).minusNanos(1);
 			eventoList = eventoRepository.findByDataInizioBetweenAndCalendario(start, end, calendario);
+			break;
 		}
 		return eventoList;
 	}
