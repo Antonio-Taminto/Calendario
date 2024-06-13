@@ -60,7 +60,7 @@ public class EventoController {
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFine,
 			@RequestBody Calendario calendario) {
 		return ResponseEntity.ok(
-				eventoService.getEventoBetweenDates(dataInizio.atStartOfDay(), dataFine.atStartOfDay(), calendario));
+				eventoService.getEventoBetweenDates(dataInizio, dataFine, calendario));
 	}
 	@GetMapping("/filter/{filter_enum}")
 	public ResponseEntity<List<Evento>> getEventoFilter(
@@ -69,9 +69,10 @@ public class EventoController {
 		return ResponseEntity.ok(eventoService.getEventoFilter(data, filterEnum, calendario));
 	}
 
-	@PostMapping("/")
+	@PostMapping("/{filter_enum}")
 	public ResponseEntity<?> createEventoRipetuto(@RequestBody Evento evento,
-			@RequestParam("until") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime fineRipetizione) {
-		return ResponseEntity.ok(eventoService.createEventoRipetuto(evento, fineRipetizione));
+												  @PathVariable("filter_enum") FilterEnum filterEnum,
+			@RequestParam("until") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fineRipetizione) {
+		return ResponseEntity.ok(eventoService.createEventoRipetuto(evento,filterEnum, fineRipetizione));
 	}
 }

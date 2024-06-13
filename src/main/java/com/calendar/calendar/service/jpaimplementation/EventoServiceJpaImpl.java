@@ -64,28 +64,45 @@ public class EventoServiceJpaImpl implements EventoService {
 	}
 
 	@Override
-	public List<Evento> getEventoBetweenDates(LocalDateTime inizio, LocalDateTime fine, Calendario calendario) {
-		if (inizio.isAfter(fine)) {
+	public List<Evento> getEventoBetweenDates(LocalDate inizio, LocalDate fine, Calendario calendario) {
+		LocalDateTime inizioTime = inizio.atStartOfDay();
+		LocalDateTime fineTime = fine.atTime(LocalTime.MAX);
+		if (inizioTime.isAfter(fineTime)) {
 			throw new DateMismatchException(
-					"la data di inizio è minore di quella finale, inizio :" + inizio + " fine: " + fine);
+					"la data di inizio è minore di quella finale, inizio :" + inizioTime + " fine: " + fineTime);
 		}
-		List<Evento> eventoList = eventoRepository.findByDataInizioBetweenAndCalendario(inizio, fine, calendario);
+		List<Evento> eventoList = eventoRepository.findByDataInizioBetweenAndCalendario(inizioTime, fineTime, calendario);
 		return eventoList;
 	}
 
 	@Override
-	public List<Evento> createEventoRipetuto(Evento evento, LocalDateTime fineRipetizione) {
-		if (evento.getDataInizio().isAfter(fineRipetizione)) {
+	public List<Evento> createEventoRipetuto(Evento evento,FilterEnum filterEnum, LocalDate fineRipetizione) {
+		LocalDateTime fineRipetizioneTime = fineRipetizione.atTime(LocalTime.MAX);
+		if (evento.getDataInizio().isAfter(fineRipetizioneTime)) {
 			throw new DateMismatchException("la data di ripetizione non è corretta: " + fineRipetizione
 					+ "il primo evento inizia: " + evento.getDataInizio());
 		}
 		List<Evento> eventoList = new ArrayList<>();
-		while (evento.getDataInizio().isBefore(fineRipetizione)) {
-			Evento newEvento = new Evento();
-			BeanUtils.copyProperties(evento, newEvento);
-			eventoList.add(newEvento);
-			evento.setDataInizio(evento.getDataInizio().plusDays(1));
-			evento.setDataFine(evento.getDataFine().plusDays(1));
+		switch (filterEnum) {
+			case DAILY:
+
+				while (evento.getDataInizio().isBefore(fineRipetizioneTime)) {
+					Evento newEvento = new Evento();
+					BeanUtils.copyProperties(evento, newEvento);
+					eventoList.add(newEvento);
+					evento.setDataInizio(evento.getDataInizio().plusDays(1));
+					evento.setDataFine(evento.getDataFine().plusDays(1));
+				}
+				break;
+			case WEEKLY:
+				while (evento.getDataInizio().isBefore(fineRipetizioneTime)) {
+					Evento newEvento = new Evento();
+					BeanUtils.copyProperties(evento, newEvento);
+					eventoList.add(newEvento);
+					evento.setDataInizio(evento.getDataInizio().plusWeeks(1));
+					evento.setDataFine(evento.getDataFine().plusWeeks(1));
+				}
+				break;
 		}
 		return eventoRepository.saveAll(eventoList);
 	}

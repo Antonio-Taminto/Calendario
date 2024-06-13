@@ -5,7 +5,6 @@ import com.calendar.calendar.model.Calendario;
 import com.calendar.calendar.model.Evento;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventoService {
@@ -19,9 +18,9 @@ public interface EventoService {
 
 	void deleteEventoById(Long id);
 
-	List<Evento> getEventoBetweenDates(LocalDateTime inzio, LocalDateTime fine, Calendario calendario);
+	List<Evento> getEventoBetweenDates(LocalDate inzio, LocalDate fine, Calendario calendario);
 
 	List<Evento> getEventoFilter(LocalDate data, FilterEnum filterEnum, Calendario calendario);
 
-	List<Evento> createEventoRipetuto(Evento evento, LocalDateTime fineRipetizione);
+	List<Evento> createEventoRipetuto(Evento evento,FilterEnum filterEnum, LocalDate fineRipetizione);
 }
