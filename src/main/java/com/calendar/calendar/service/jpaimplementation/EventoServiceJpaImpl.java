@@ -103,6 +103,17 @@ public class EventoServiceJpaImpl implements EventoService {
 					evento.setDataFine(evento.getDataFine().plusWeeks(1));
 				}
 				break;
+		case MONTHLY:
+			while (evento.getDataInizio().isBefore(fineRipetizioneTime)) {
+				Evento newEvento = new Evento();
+				BeanUtils.copyProperties(evento, newEvento);
+				eventoList.add(newEvento);
+				evento.setDataInizio(evento.getDataInizio().plusMonths(1));
+				evento.setDataFine(evento.getDataFine().plusMonths(1));
+			}
+			break;
+		default:
+			break;
 		}
 		return eventoRepository.saveAll(eventoList);
 	}
